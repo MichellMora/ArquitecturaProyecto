@@ -156,21 +156,19 @@ public class PersonaControllers implements Controller {
 @RequestMapping(method = RequestMethod.POST, value = "personaEditarForm1.htm")
     public String processSubmit5(HttpServletRequest req, SessionStatus status,ModelMap model) 
     {
-      
-        
-        
+
         PersonaMySQLDAO pDao = new PersonaMySQLDAO();
             
         Logger.getLogger(PersonaMySQLDAO.class.getName()).log(Level.INFO, "Ejecutando processSubmit5...");
 
         //int id = pDao.obtenerId(MySqlDataSource.getConexionBD());
         String ident = req.getParameter("identificacion");
-        
+        String nombre1 = req.getParameter("nombre1");
         
         Persona p = new Persona();
         //p.setId(id);
         p.setIdentificacion(ident);
-        
+        p.setNombre1(nombre1);
             
         List<Persona> datos = pDao.consultarPersona(p, MySqlDataSource.getConexionBD());
 
@@ -186,10 +184,12 @@ public class PersonaControllers implements Controller {
 @RequestMapping(method = RequestMethod.POST, value = "personaEditarForm2.htm")
     public String processSubmit6(HttpServletRequest req, SessionStatus status,ModelMap model) 
     {
-
-        PersonaMySQLDAO pDao = new PersonaMySQLDAO();
+      //  //
+        //PersonaMySQLDAO pDao = new PersonaMySQLDAO();
+       FactoryDao MySqlFactory = FactoryDao.getFactory(FactoryDao.MYSQL_FACTORY);   
         Logger.getLogger(PersonaMySQLDAO.class.getName()).log(Level.INFO, "Ejecutando processSubmit6...");
-        
+
+        int id = Integer.parseInt(req.getParameter("id"));
         String ident = req.getParameter("identificacion");
         String nombre1 = req.getParameter("nombre1");
         String nombre2 = req.getParameter("nombre2");
@@ -201,10 +201,10 @@ public class PersonaControllers implements Controller {
         String telef = req.getParameter("telefono");
         String email = req.getParameter("email");
         
-        Logger.getLogger(PersonaMySQLDAO.class.getName()).log(Level.INFO, "identificacion: {0}", ident);
+        Logger.getLogger(PersonaMySQLDAO.class.getName()).log(Level.INFO, "Id persona: " + id);
         
-        Persona p = new Persona();
-        
+      Persona p = new Persona();
+        //p.setId(id);
         p.setIdentificacion(ident);
         p.setNombre1(nombre1);
         p.setNombre2(nombre2);
@@ -214,10 +214,23 @@ public class PersonaControllers implements Controller {
         p.setTipoP(tipoP);
         p.setfNacimiento(fNacimiento);
         p.setTelef(telef);
-        p.setEmail(email);
-            
-        boolean res = pDao.editarPersona(p, MySqlDataSource.getConexionBD());                         
+        p.setEmail(email);     
         
+         /*boolean insert = MySqlFactory.getPersonaDao().crearPersona(p, MySqlDataSource.getConexionBD());
+
+        Logger.getLogger(PersonaControllers.class.getName()).log(Level.SEVERE, null, "Registrar + " + ident + "-" + insert);
+        
+        if (insert)
+            model.put("mensaje", "El registro fue creado satisfactoriamente!!!");
+        else
+            model.put("mensaje", "El registro NO fue creado, consulte con el administrador...");
+        
+        return "persona_crear";*/
+                
+            
+       // boolean res = pDao.editarPersona(p, MySqlDataSource.getConexionBD());                         
+   boolean res = MySqlFactory.getPersonaDao().editarPersona(p, MySqlDataSource.getConexionBD());
+               
         if (res)
             model.put("mensaje", "Se edito satisfactoriamente!!!");
         else
@@ -225,8 +238,8 @@ public class PersonaControllers implements Controller {
         
         return "persona_editar";
         
-    }   
-   
+    }
+ 
     
     @Override
     public String value() {
